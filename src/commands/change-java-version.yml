@@ -1,0 +1,14 @@
+description: |
+  Change default java version from OpenJDK v11.
+parameters:
+  java-version:
+    type: integer
+    default: 8
+    description: |
+      The version of OpenJDK to change to
+steps:
+  - run:
+      environment:
+        PARAM_JAVA_VER: << parameters.java-version >>
+      name: Change OpenJDK version
+      command: <<include(scripts/change-java-version.sh)>>

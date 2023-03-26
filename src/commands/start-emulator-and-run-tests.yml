@@ -119,7 +119,7 @@ parameters:
       Use this to customize how the find command is used to look for relevant
       file changes.
     type: string
-    default: ". -name 'build.gradle'"
+    default: ". -name \"build.gradle*\" -o -name \"settings.gradle*\""
   save-gradle-cache:
     description: |
       Whether to write to the gradle cache after the tests have run
@@ -155,6 +155,10 @@ parameters:
       Steps to run after the tests
     type: steps
     default: []
+  pre-test-command:
+    description: Command to run prior to runnning the test command
+    type: string
+    default: " "
   test-command:
     description: Command to run in order to run the tests
     type: string
@@ -181,6 +185,21 @@ parameters:
       Whether to kill the emulators after the tests complete
     type: boolean
     default: true
+  pull-data:
+    description: |
+      Whether to pull data after running tests
+    type: boolean
+    default: false
+  pull-data-path:
+    description: |
+      Emulator directory to pull data from
+    type: string
+    default: data
+  pull-data-target:
+    description: |
+      Location to save pulled data
+    type: string
+    default: "."
 
 steps:
   - create-avd:
@@ -214,10 +233,14 @@ steps:
   - << parameters.pre-run-tests-steps >>
   - run-tests:
       working-directory: << parameters.run-tests-working-directory >>
+      pre-test-command: << parameters.pre-test-command >>
       test-command: << parameters.test-command >>
       max-tries: << parameters.max-tries >>
       retry-interval: << parameters.retry-interval >>
       no-output-timeout: << parameters.no-output-timeout >>
+      pull-data: << parameters.pull-data >>
+      pull-data-path: << parameters.pull-data-path >>
+      pull-data-target: << parameters.pull-data-target >>
   - << parameters.post-run-tests-steps >>
   - when:
       condition: << parameters.save-gradle-cache >>
